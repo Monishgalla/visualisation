@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Bubble Chart</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <svg width="1200" height="600"></svg>
+    <!-- Increased width of SVG -->
+
+    <div
+      id="tooltip"
+      style="
+        position: absolute;
+        display: none;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 5px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+      "
+    ></div>
+
+    <script>
+      d3.json('merged_dataset.json').then(function (data) {
+        const svg = d3.select('svg');
+
+        const margin = {
+          top: 20,
+          right: 120,
+          bottom: 70,
+          left: 70,
+        }; // Increased right margin for legend
+        const width =
+          +svg.attr('width') - margin.left - margin.right;
+        const height =
+          +svg.attr('height') - margin.top - margin.bottom;
+
+        const g = svg
+          .append('g')
+          .attr(
+            'transform',
+            'translate(' +
+              margin.left +
+              ',' +
+              margin.top +
+              ')',
+          );
+
+        const x = d3
+          .scaleLinear()
+          .domain([0, d3.max(data, (d) => d.salary_in_usd)])
+          .range([0, width]);
+
+        const y = d3
+          .scaleLinear()
+          .domain([0, d3.max(data, (d) => d.place)])
+          .range([height, 0]);
+
+        const radius = d3
+          .scaleLinear()
+          .domain([0, d3.max(data, (d) => d.pop2023)])
+          .range([2, 20]);
+
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        const circles = g
+          .selectAll('circle')
+          .data(data)
+          .enter()
+          .append('circle')
+          .attr('cx', (d) => x(d.salary_in_usd))
+          .attr('cy', (d) => y(d.place))
+          .attr('r', (d) => radius(d.pop2023))
+          .style('fill', (d) => color(d.job_title))
+          .style('opacity', 0.7)
+          .on('mouseover', (event, d) => {
+            const tooltip =
+              document.getElementById('tooltip');
+            tooltip.innerHTML = Salary: $${d.salary_in_usd};
+            tooltip.style.display = 'block';
+            tooltip.style.left = event.pageX + 'px';
+            tooltip.style.top = event.pageY + 'px';
+          })
+          .on('mouseout', () => {
+            const tooltip =
+              document.getElementById('tooltip');
+            tooltip.style.display = 'none';
+          });
+
+        g.append('g')
+          .attr('transform', 'translate(0,' + height + ')')
+          .call(d3.axisBottom(x))
+          .append('text')
+          .attr('y', 30)
+          .attr('x', width / 2)
+          .attr('fill', '#000')
+          .attr('font-size', '14px')
+          .text('Salary ($)');
+
+        g.append('g')
+          .call(d3.axisLeft(y))
+          .append('text')
+          .attr('transform', 'rotate(-90)')
+          .attr('y', -40)
+          .attr('x', -height / 2)
+          .attr('fill', '#000')
+          .attr('font-size', '14px')
+          .text('Place');
+
+        const legend = g
+          .selectAll('.legend')
+          .data(color.domain())
+          .enter()
+          .append('g')
+          .attr('class', 'legend')
+          .attr(
+            'transform',
+            (d, i) =>
+              'translate(' +
+              (width + 20) +
+              ',' +
+              i * 20 +
+              ')',
+          ); // Adjusted legend translation
+
+        legend
+          .append('rect')
+          .attr('x', 0)
+          .attr('width', 18)
+          .attr('height', 18)
+          .style('fill', color);
+
+        legend
+          .append('text')
+          .attr('x', 24)
+          .attr('y', 9)
+          .attr('dy', '.35em')
+          .style('text-anchor', 'start')
+          .style('font-size', '12px') // Reduced font size for legend text
+          .text((d) => d);
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Data Visualization</title>
+    <style>
+      /* Add your CSS styles here */
+      .legend {
+        font-size: 12px;
+      }
+
+      .tooltip {
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Add your HTML elements here -->
+
+    <h1>Bar Graph</h1>
+    <div id="bar-graph"></div>
+
+    <!-- Load D3.js library -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script>
+      // Add your JavaScript code here
+      // Load the data from merged_dataset.json
+      d3.json('merged_dataset.json')
+        .then(function (data) {
+          // Bar Graph
+          const jobTitles = data
+            .map((d) => d.job_title)
+            .filter(
+              (value, index, self) =>
+                self.indexOf(value) === index,
+            );
+          const population1980 = jobTitles.map((title) => ({
+            job_title: title,
+            population: d3.sum(
+              data.filter((d) => d.job_title === title),
+              (d) => d.pop1980,
+            ),
+          }));
+          const population2023 = jobTitles.map((title) => ({
+            job_title: title,
+            population: d3.sum(
+              data.filter((d) => d.job_title === title),
+              (d) => d.pop2023,
+            ),
+          }));
+
+          const margin = {
+            top: 20,
+            right: 30,
+            bottom: 60,
+            left: 60,
+          };
+          const width = 600 - margin.left - margin.right;
+          const height = 400 - margin.top - margin.bottom;
+
+          const svg = d3
+            .select('#bar-graph')
+            .append('svg')
+            .attr(
+              'width',
+              width + margin.left + margin.right,
+            )
+            .attr(
+              'height',
+              height + margin.top + margin.bottom,
+            )
+            .append('g')
+            .attr(
+              'transform',
+              'translate(' +
+                margin.left +
+                ',' +
+                margin.top +
+                ')',
+            );
+
+          const xScale = d3
+            .scaleBand()
+            .domain(jobTitles)
+            .range([0, width])
+            .padding(0.1);
+
+          const yScale = d3
+            .scaleLinear()
+            .domain([
+              0,
+              d3.max(
+                population1980.concat(population2023),
+                (d) => d.population,
+              ),
+            ])
+            .range([height, 0]);
+
+          svg
+            .append('g')
+            .attr(
+              'transform',
+              'translate(0,' + height + ')',
+            )
+            .call(d3.axisBottom(xScale))
+            .selectAll('text')
+            .style('text-anchor', 'end')
+            .attr('dx', '-.8em')
+            .attr('dy', '.15em')
+            .attr('transform', 'rotate(-45)');
+
+          svg.append('g').call(d3.axisLeft(yScale));
+
+          svg
+            .selectAll('.bar1980')
+            .data(population1980)
+            .enter()
+            .append('rect')
+            .attr('class', 'bar1980')
+            .attr('x', (d) => xScale(d.job_title))
+            .attr('y', (d) => yScale(d.population))
+            .attr('width', xScale.bandwidth() / 2)
+            .attr(
+              'height',
+              (d) => height - yScale(d.population),
+            )
+            .attr('fill', 'steelblue')
+            .on('mouseover', function (event, d) {
+              d3.select(this).attr(
+                'fill',
+                'lightsteelblue',
+              );
+              tooltip.style('opacity', 1);
+              tooltip
+                .html(
+                  <strong>${d.job_title}</strong><br>Population: ${d.population},
+                )
+                .style('left', event.pageX + 10 + 'px')
+                .style('top', event.pageY - 20 + 'px');
+            })
+            .on('mouseout', function () {
+              d3.select(this).attr('fill', 'steelblue');
+              tooltip.style('opacity', 0);
+            });
+
+          svg
+            .selectAll('.bar2023')
+            .data(population2023)
+            .enter()
+            .append('rect')
+            .attr('class', 'bar2023')
+            .attr(
+              'x',
+              (d) =>
+                xScale(d.job_title) +
+                xScale.bandwidth() / 2,
+            )
+            .attr('y', (d) => yScale(d.population))
+            .attr('width', xScale.bandwidth() / 2)
+            .attr(
+              'height',
+              (d) => height - yScale(d.population),
+            )
+            .attr('fill', 'orange')
+            .on('mouseover', function (event, d) {
+              d3.select(this).attr('fill', 'lightsalmon');
+              tooltip.style('opacity', 1);
+              tooltip
+                .html(
+                  <strong>${d.job_title}</strong><br>Population: ${d.population},
+                )
+                .style('left', event.pageX + 10 + 'px')
+                .style('top', event.pageY - 20 + 'px');
+            })
+            .on('mouseout', function () {
+              d3.select(this).attr('fill', 'orange');
+              tooltip.style('opacity', 0);
+            });
+
+          // Legend
+          const legend = svg
+            .append('g')
+            .attr('class', 'legend')
+            .attr(
+              'transform',
+              'translate(' + (width - 100) + ',0)',
+            );
+
+          const legendData = [
+            {
+              color: 'steelblue',
+              label: '1980 Population',
+            },
+            { color: 'orange', label: '2023 Population' },
+          ];
+
+          legend
+            .selectAll('rect')
+            .data(legendData)
+            .enter()
+            .append('rect')
+            .attr('x', 0)
+            .attr('y', (d, i) => 20 * i)
+            .attr('width', 18)
+            .attr('height', 18)
+            .attr('fill', (d) => d.color);
+
+          legend
+            .selectAll('text')
+            .data(legendData)
+            .enter()
+            .append('text')
+            .attr('x', 25)
+            .attr('y', (d, i) => 20 * i + 9)
+            .attr('dy', '.35em')
+            .text((d) => d.label);
+
+          // Tooltip
+          const tooltip = d3
+            .select('body')
+            .append('div')
+            .attr('class', 'tooltip')
+            .style('opacity', 0);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+TODAY
+YESTERDAY
+Nenu vere route teeskuntunna
+07:42
+Binna poyyi login ayyi tableau ki connect avdam
+07:42
+Repu aa route lo vasta
+07:42
+Haa sare
+07:42
+Emaina idea vacchinda tableau
+07:42
+Doc ppt ayyaya
+07:42
+Em ravatledhu ui ey complex ga undi
+07:43
+Avnaa
+07:43
+Theja Galla
+Doc ppt ayyaya
+Chestunna
+07:43
+You
+Chestunna
+Haa ok
+07:43
+Potane msg chesta
+07:43
+Sare
+07:43
+Hi
+08:57
+Share the zoom link
+08:57
+5min
+08:57
+Haa
+08:59
+meet.google.com
+https://meet.google.com/cwt-sfio-eod
+meet.google.com
+https://meet.google.com/cwt-sfio-eod
+09:16
+parallely we will have a phone call
+09:16
+naadaggara earphones levu
+09:17
+Avnaaa
+09:19
+haa
+09:19
+Naku konchem time padutundi
+09:19
+Oka 15 min
+09:19
+sare bro
+09:19
+Hi
+10:15
+Hello
+10:16
+Call?
+10:16
+meet.google.com
+https://meet.google.com/etu-snjs-apc
+meet.google.com
+https://meet.google.com/etu-snjs-apc
+10:24
+Reyy
+14:29
+Etla raa idi
+14:29
+Dude little busy
+15:02
+Tableau lo as of now kuda chaalu
+15:02
+But we will try to improve
+15:02
+Eppudu
+15:02
+Ee roje kada last
+15:02
+You
+But we will try to improve
+5ki ok na
+15:02
+4 ki kudaradha
+15:02
+Will let you know
+15:03
+Sure!
+15:03
+Ok
+15:05
+Hi
+17:17
+Dude message me once you reach home
+17:17
+Yeah ok
+17:51
+Reached
+17:51
+us04web.zoom.us
+https://us04web.zoom.us/meeting/72826704496
+us04web.zoom.us
+https://us04web.zoom.us/meeting/72826704496
+18:03
+meet.google.com
+https://meet.google.com/tqv-xmbn-rrn
+meet.google.com
+https://meet.google.com/tqv-xmbn-rrn
+18:05
+Hii
+20:05
+Yeah bro
+20:25
+Call at 9:30
+20:25
+Tableau chesava?
+20:26
+Nen inka intike poledhu
+20:26
+Intiki vellaka chesta
+20:26
+Oreyy repey dead line
+20:26
+Okay 30mins should complete tableau
+20:26
+Icchestava aa lopu anna
+20:26
+Haa eroju night ey ichesta
+20:26
+Haa ok
+20:39
+bro
+21:29
+meet?
+21:29
+Haa
+21:29
+Share link
+21:29
+meet.google.com
+https://meet.google.com/ocu-einp-mam
+meet.google.com
+https://meet.google.com/ocu-einp-mam
+21:30
+donot shout no earphones
+21:30
+Ok ok
+21:30
+Tableau Tutorials & Questions.docx
+DOCX•4 MB
+21:46
+TODAY
+Hii
+07:24
+hello
+08:11
+Reyy
+08:12
+Binna ppt
+08:12
+Migata docs pettu raa
+08:12
+Plague check chesi changes cheyyali gaa
+08:12
+Eeroje last
+08:12
+lag fellow
+08:13
+rendu share chesa vadiki
+08:13
+ippudu code kuda
+08:14
+Acnaa
+08:38
+haa
+08:38
+ekkada?
+08:38
+Reyy ppt lo visualizations okkadi kuda ledu
+08:40
+Anni files share chesava
+08:41
+Hi
+09:57
+Can you share me the python, java code and tableau files
+09:57
+Python file is in mail
+09:58
+With name
+09:58
+Pythonviz
+09:58
+.ipynb
+09:58
+Okay
+09:58
+And tableau just screenshots teesa anthe
+09:58
+Js wait i will share
+09:58
+You
+And tableau just screenshots teesa anthe
+Haa avey pettu
+09:59
+d3js.org
+https://d3js.org/d3.v7.min.js
+d3js.org
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Heatmap with Hover Effect and Legend</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      /* Add some basic styling */
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .heatmap-container {
+        margin: 20px;
+        position: relative;
+      }
+      .heatmap-tooltip {
+        position: absolute;
+        background-color: white;
+        border: solid;
+        border-width: 1px;
+        border-radius: 5px;
+        padding: 10px;
+        display: none;
+      }
+      .legend {
+        font-size: 12px;
+        margin-top: 20px;
+      }
+      .legend-scale rect {
+        width: 40px;
+        height: 20px;
+        margin-right: 5px;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="heatmap-container">
+      <h2>Heatmap with Hover Effect and Legend</h2>
+      <svg id="heatmap"></svg>
+      <div class="heatmap-tooltip"></div>
+      <div class="legend"></div>
+    </div>
+
+    <script>
+      // Load data from JSON file
+      d3.json('merged_dataset.json').then(function (data) {
+        // Define SVG dimensions
+        const margin = {
+          top: 50,
+          right: 30,
+          bottom: 100,
+          left: 100,
+        };
+        const width = 800 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
+
+        // Create SVG
+        const svg = d3
+          .select('#heatmap')
+          .attr('width', width + margin.left + margin.right)
+          .attr(
+            'height',
+            height + margin.top + margin.bottom,
+          )
+          .append('g')
+          .attr(
+            'transform',
+            'translate(' +
+              margin.left +
+              ',' +
+              margin.top +
+              ')',
+          );
+
+        // Define scales
+        const xScale = d3
+          .scaleBand()
+          .domain(data.map((d) => d.job_title))
+          .range([0, width])
+          .padding(0.1);
+
+        const yScale = d3
+          .scaleBand()
+          .domain(data.map((d) => d.company_size))
+          .range([height, 0])
+          .padding(0.1);
+
+        const colorScale = d3
+          .scaleLinear()
+          .domain([0, d3.max(data, (d) => d.salary_in_usd)])
+          .range(['#f2f2f2', '#0066cc']);
+
+        // Add heatmap rectangles
+        svg
+          .selectAll()
+          .data(data)
+          .enter()
+          .append('rect')
+          .attr('x', (d) => xScale(d.job_title))
+          .attr('y', (d) => yScale(d.company_size))
+          .attr('width', xScale.bandwidth())
+          .attr('height', yScale.bandwidth())
+          .style('fill', (d) => colorScale(d.salary_in_usd))
+          .on('mouseover', handleMouseOver)
+          .on('mousemove', handleMouseMove)
+          .on('mouseout', handleMouseOut);
+
+        // Add X axis
+        svg
+          .append('g')
+          .attr('transform', 'translate(0,' + height + ')')
+          .call(d3.axisBottom(xScale))
+          .selectAll('text')
+          .style('text-anchor', 'end')
+          .attr('transform', 'rotate(-45)');
+
+        // Add Y axis
+        svg.append('g').call(d3.axisLeft(yScale));
+
+        // Add legend
+        const legend = d3.select('.legend');
+
+        const legendScale = d3
+          .scaleLinear()
+          .domain([0, d3.max(data, (d) => d.salary_in_usd)])
+          .range([0, 400]);
+
+        const legendAxis = d3
+          .axisBottom(legendScale)
+          .ticks(5)
+          .tickFormat(d3.format('$,'));
+
+        legend
+          .append('g')
+          .attr('class', 'legend-scale')
+          .attr('transform', 'translate(20,0)')
+          .call(legendAxis);
+
+        // Add color rectangles to legend
+        const colorRects = legend
+          .selectAll('.color-rect')
+          .data(colorScale.range())
+          .enter()
+          .append('rect')
+          .attr('class', 'color-rect')
+          .attr('x', (d, i) => 20 + i * 80)
+          .attr('y', 20)
+          .attr('width', 40)
+          .attr('height', 20)
+          .style('fill', (d) => d);
+        // Add legend labels
+        legend
+          .append('text')
+          .attr('x', 10)
+          .attr('y', 50)
+          .text('Salary Range ($)');
+
+        // Function to handle mouseover event
+        function handleMouseOver(event, d) {
+          d3.select('.heatmap-tooltip')
+            .style('display', 'block')
+            .html(
+              <strong>Salary:</strong> $${d.salary_in_usd.toLocaleString()},
+            )
+            .style('left', event.pageX + 10 + 'px')
+            .style('top', event.pageY - 30 + 'px');
+        }
+
+        // Function to handle mousemove event
+        function handleMouseMove(event, d) {
+          d3.select('.heatmap-tooltip')
+            .style('left', event.pageX + 10 + 'px')
+            .style('top', event.pageY - 30 + 'px');
+        }
+
+        // Function to handle mouseout event
+        function handleMouseOut() {
+          d3.select('.heatmap-tooltip').style(
+            'display',
+            'none',
+          );
+        }
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
