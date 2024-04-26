@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Visualization Showcase</title>
+  <style>
+    /* Add your CSS styles here */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
+    nav {
+      background-color: #444;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+
+    footer {
+      background-color: #444;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    footer button {
+      background-color: #555;
+      color: #fff;
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    footer button:hover {
+      background-color: #777;
+    }
+
+    .icon-button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .icon-button img {
+      width: 24px; /* Adjust the size as needed */
+      height: 24px; /* Adjust the size as needed */
+      background-color: transparent;
+      border-radius: 50%;
+    }
+    /* Add more styles as needed */
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Visualization Showcase </h1>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+  <a href="#">D3.js Visualizations</a>
+  <a href="python.html" target="_blank">Python Visualizations</a>
+  <a href="tableau.html" target="_blank">Tableau Visualizations</a>
+</nav>
+
+<div class="container">
+
+  <h2 id="d3js">D3.js Visualizations</h2>
+  <!-- Add your D3.js visualization placeholders here -->
+  <h3>Visualizations done using d3.js</h3>
+  <div>
+    <img src="img/bubblechart.png" alt="D3.js Visualization 1" style="max-width: 100%; height: auto;">
+    <p>
+      The bubble chart visualizes the association between pay, location, and population. Each bubble represents a distinct data point, with the size corresponding to the population and the color representing salary range. This visualization allows for the observation of salary differences across various areas and population densities.
+      
+      Insights:
+      
+      High-density bubbles in specific regions indicate areas with a concentration of high-paying occupations and a dense population.
+      Varying bubble sizes indicate salary disparities between areas, with larger bubbles signifying higher population density.
+      </p>
+    <img src="img/bargraph.png" alt="D3.js Visualization 2" style="max-width: 100%; height: auto;">
+    <p>The bar graph visualization depicts a comparative examination of job title populations during 1980–2023. Visualizing the distribution of job titles across time allows us to see patterns in job attractiveness and shifts in workforce dynamics.
+
+      Insights:
+      
+      Certain job titles had high population expansion, indicating rising demand or growing businesses.
+      In contrast, several job categories had population declines, indicating changes in market demand or technology improvements affecting employment responsibilities.
+      </p>
+    <img src="img/heatmap.png" alt="D3.js Visualization 2" style="max-width: 100%; height: auto;">
+    <p>The heat map visualization provides a detailed picture of wage distributions by job title and firm size. By color-coding wage ranges, this graphic allows for rapid insights into salary differences and patterns in the dataset.
+
+      Insights:
+      
+      Heat map gradients show salary clusters within specific job titles and firm sizes, suggesting areas with high and low remuneration.
+      Darker tones indicate greater wage ranges, while lighter shades reflect lower salary categories, making salary trends easy to identify.
+      </p>
+  </div>
+
+</div>
+
+<footer>
+    <button onclick="downloadReport()" class="icon-button"><img src="img/report.png" alt="Report">Report</button>
+      <button onclick="downloadPPT()" class="icon-button"><img src="img/ppt.png" alt="PPT">PPT</button>
+      <button onclick="downloadVisualization('js.txt')" class="icon-button"><img src="img/d3js.png" alt="D3.js">d3.js</button>
+      
+      <a href="https://colab.research.google.com/drive/16HPOdfPZUcUyGulMzGsUidfP-8d4bmHZ?usp=sharing" target="_blank" class="icon-button"><button><img src="img/py.png" alt="Python">Python</button></a>
+      <a href="https://github.com" target="_blank" class="icon-button"><button><img src="img/git.png" alt="GitHub">Github</button></a>
+      <a href="https://public.tableau.com/authoring/FinalProject_17139449005570/Sheet1/Sheet%205#2" target="_blank" class="icon-button"><button><img src="img/tableau.png" alt="Tableau">Tableau</button></a>
+  </footer>
+
+
+<script>
+  function downloadReport() {
+    // Create a temporary <a> element to trigger the download
+    var link = document.createElement('a');
+    link.download = 'report.docx'; // Set the filename
+    link.href = 'report.docx'; // Set the path to your report file
+    document.body.appendChild(link);
+    link.click();
+    
+    document.body.removeChild(link);
+    alert("Downloading Report...");
+  }
+
+  function downloadPPT() {
+    // Logic to download the PPT
+    alert("Downloading PPT...");
+  }
+
+  function downloadVisualization(visualizationId) {
+    if (visualizationId === 'js.txt') {
+      // Create a temporary <a> element to trigger the download of the JS file
+      var link = document.createElement('a');
+      link.download = 'js.txt'; // Set the filename
+      link.href = 'js.txt'; // Set the path to your d3.js file
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      alert("Downloading Visualization: " + visualizationId);
+    }
+  }
+
+
+  
+</script>
+
+</body>
+</html>

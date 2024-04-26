@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Visualization Showcase</title>
+  <style>
+    /* Add your CSS styles here */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
+    nav {
+      background-color: #444;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+
+    footer {
+      background-color: #444;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    footer button {
+      background-color: #555;
+      color: #fff;
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    footer button:hover {
+      background-color: #777;
+    }
+    /* Add more styles as needed */
+
+    .icon-button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+      
+      
+    }
+
+    .icon-button img {
+      width: 24px; /* Adjust the size as needed */
+      height: 24px; /* Adjust the size as needed */
+      background-color: transparent;
+      border-radius: 50%;
+    
+    }
+
+    
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Visualization Showcase </h1>
+</header>
+
+<nav>
+  <a href="#">Home</a>
+  <a href="d3js.html" target="_blank">D3.js Visualizations</a>
+  <a href="python.html" target="_blank">Python Visualizations</a>
+  <a href="tableau.html" target="_blank">Tableau Visualizations</a>
+</nav>
+
+<div class="container">
+
+<h2>Group 19:</h2>
+<h4> Monish Galla (ID: 11716255)</h4>
+<h4>Sanghavi Yelakanti (ID: 11703513 )</h4>
+<h4> Sanjana Dadi (ID: 11720650)</h4>
+<h4>Jaswanth Rikkala (ID: 11701833)</h4>
+  
+</div>
+
+<footer>
+  <button onclick="downloadReport()" class="icon-button"><img src="img/report.png" alt="Report">Report</button>
+    <button onclick="downloadPPT()" class="icon-button"><img src="img/ppt.png" alt="PPT">PPT</button>
+    <button onclick="downloadVisualization('js.txt')" class="icon-button"><img src="img/d3js.png" alt="D3.js">d3.js</button>
+    
+    <a href="https://colab.research.google.com/drive/16HPOdfPZUcUyGulMzGsUidfP-8d4bmHZ?usp=sharing" target="_blank" class="icon-button"><button><img src="img/py.png" alt="Python">Python</button></a>
+    <a href="https://github.com" target="_blank" class="icon-button"><button><img src="img/git.png" alt="GitHub">Github</button></a>
+    <a href="https://public.tableau.com/authoring/FinalProject_17139449005570/Sheet1/Sheet%205#2" target="_blank" class="icon-button"><button><img src="img/tableau.png" alt="Tableau">Tableau</button></a>
+</footer>
+
+
+
+<script>
+  function downloadReport() {
+    // Create a temporary <a> element to trigger the download
+    var link = document.createElement('a');
+    link.download = 'report.docx'; // Set the filename
+    link.href = 'report.docx'; // Set the path to your report file
+    document.body.appendChild(link);
+    link.click();
+    
+    document.body.removeChild(link);
+    alert("Downloading Report...");
+  }
+
+  function downloadPPT() {
+    // Logic to download the PPT
+    alert("Downloading PPT...");
+  }
+
+  function downloadVisualization(visualizationId) {
+    if (visualizationId === 'js.txt') {
+      // Create a temporary <a> element to trigger the download of the JS file
+      var link = document.createElement('a');
+      link.download = 'js.txt'; // Set the filename
+      link.href = 'js.txt'; // Set the path to your d3.js file
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      alert("Downloading Visualization: " + visualizationId);
+    }
+  }
+
+
+  
+</script>
+
+</body>
+</html>
